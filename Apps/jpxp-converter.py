@@ -1,6 +1,7 @@
 # run with "python jpxp-converter.py my-image.jpg"
 # ensure to have ran "pip install pillow pillow-avif-plugin" before and ensure you have python installed
 # if it doesn't work, run "py -m pip install pillow-avif-plugin"
+# IF IT STILL DOESNT WORK, nbfwg 8nc27b b1cnb2nbtg87rn192328t7rtn4g3483g9q0w9hgth8ghfehghf78hgfjevnn8qeYFBWGEB&NG!&GB#&?G*&!()*JJ(SKIAODPX:W  8quwnwqfUUNNGQ*wnwhdmh AHAHAHAHAHHAHAHAHA huebqw7h7fbv7bc9hquugqwuyhdchdchbdxbn xcxb xcbcb c   cbxhxhxdhsxhxbhsfrwfeueiqy?%&?&?!&*#YG!(JIOJINJNJANNSJNXMZ''.ÉÉÈ:^ÇÇÀ+A_)(IWKDMNX)!(JWMSD''HMUCINSMAHXJ HAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHhHHHHHAHHAHAHAHAHAHAGAHHAHAHAHA
 import sys
 import struct
 import json
