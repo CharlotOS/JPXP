@@ -1,8 +1,16 @@
+# prerequirements: pillow and pillow-avif-plugin (and python ofc)
+# commands: 
+# pip install Pillow
+# pip install pillow-avif-plugin
+#
+# to use: replace input.png with path to any jpeg jpg or png image on your system
+# then run "python path/to/Encoder-Decoder.py" or "py path/to/Encoder-Decoder.py" without the brackets (if on windows replace "/" with "\")
+#
 import struct
 import json
 from PIL import Image
 import io
-import avif  # pyavif library
+import pillow_avif  # just importing registers AVIF support since pyavif is hard to install
 
 MAGIC = b'JPX+'
 VERSION = 1
@@ -11,7 +19,7 @@ class JPXPFile:
     def __init__(self, width=0, height=0, compression='AVIF', alpha=False, hdr=False, image_bytes=b''):
         self.width = width
         self.height = height
-        self.compression = compression  # 'AVIF' or 'JPEGXL'
+        self.compression = compression
         self.alpha = alpha
         self.hdr = hdr
         self.image_bytes = image_bytes
@@ -68,46 +76,33 @@ class JPXPFile:
             image_bytes=image_bytes
         )
 
-def compress_image_to_avif(image_path: str) -> bytes:
-    # Load image with Pillow
-    img = Image.open(image_path).convert('RGBA')  # keep alpha if any
+def compress_image_to_avif(image_path: str) -> tuple:
+    img = Image.open(image_path).convert('RGBA')
+    has_alpha = img.mode == 'RGBA'
 
-    # Encode to AVIF bytes using pyavif
-    avif_bytes = avif.encode(img)
-
-    return avif_bytes, img.width, img.height, img.mode == 'RGBA'
+    buf = io.BytesIO()
+    img.save(buf, format='AVIF')
+    return buf.getvalue(), img.width, img.height, has_alpha
 
 def decompress_avif_to_image(avif_bytes: bytes) -> Image.Image:
-    # Decode AVIF bytes to Pillow image
-    img = avif.decode(avif_bytes)
-    return img
+    return Image.open(io.BytesIO(avif_bytes))
 
 if __name__ == '__main__':
-    input_image_path = 'input.png'  # Replace with your input image file path
-    output_jpxp_path = 'output.jpxp'
-    output_decoded_path = 'decoded.png'
+    input_image_path = 'input.png' # change input.png with path to any png/jpeg/jpg image on your system
+    output_jpxp_path = 'output.jpxp' # change output.jpxp with the desired filename .jpxp
+    output_decoded_path = 'decoded.png' # change decoded.png with the desired filename .png
 
-    # Compress image to AVIF
     avif_data, width, height, has_alpha = compress_image_to_avif(input_image_path)
-    print(f"Compressed {input_image_path} to AVIF ({len(avif_data)} bytes)")
+    jpxp_file = JPXPFile(width, height, 'AVIF', has_alpha, False, avif_data)
 
-    # Create JPXP file bytes
-    jpxp_file = JPXPFile(width=width, height=height, compression='AVIF', alpha=has_alpha, hdr=False, image_bytes=avif_data)
-    encoded_bytes = jpxp_file.encode()
-
-    # Save JPXP file
     with open(output_jpxp_path, 'wb') as f:
-        f.write(encoded_bytes)
+        f.write(jpxp_file.encode())
     print(f"Saved JPXP file to {output_jpxp_path}")
 
-    # Read JPXP file and decode
     with open(output_jpxp_path, 'rb') as f:
-        read_bytes = f.read()
+        decoded = JPXPFile.decode(f.read())
 
-    decoded_jpxp = JPXPFile.decode(read_bytes)
-    print(f"Decoded JPXP file metadata: width={decoded_jpxp.width}, height={decoded_jpxp.height}, alpha={decoded_jpxp.alpha}")
+    img = decompress_avif_to_image(decoded.image_bytes)
+    img.save(output_decoded_path)
+    print(f"Decoded image saved to {output_decoded_path}")
 
-    # Decompress AVIF back to image
-    decoded_img = decompress_avif_to_image(decoded_jpxp.image_bytes)
-    decoded_img.save(output_decoded_path)
-    print(f"Saved decoded image to {output_decoded_path}")
