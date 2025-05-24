@@ -65,7 +65,7 @@
 
 ---
 
-### 🔷 3. Color Profile Block (Optional)
+### 🔷 3. Color Profile Block
 
 - Contains ICC profile or NCLX color info  
 - Prefixed with a 4-byte length  
@@ -73,7 +73,7 @@
 
 ---
 
-### 🔷 4. Alpha Channel Block (Optional)
+### 🔷 4. Alpha Channel Block
 
 - Contains the alpha mask (grayscale image)  
 - Compressed using Brotli, Zstd, or same codec as image  
@@ -88,7 +88,7 @@
 
 ---
 
-### 🔷 6. Integrity Block (Optional)
+### 🔷 6. Integrity Block
 
 - 1-byte type ID (e.g. `0x01` = SHA-256)  
 - Followed by fixed-size checksum or hash  
@@ -116,7 +116,7 @@
 - Excellent for photographic images  
 - Supported via AV1 video technology
 
-### JPEG XL (optional)
+### JPEG XL
 
 - High compression efficiency  
 - Advanced progressive loading  
